@@ -1,0 +1,40 @@
+version: '2'
+services:
+    jenkins:
+        container_name: jenkins
+        build: 
+            context: .
+            dockerfile: jenkins
+        image: oidigital/jenkins
+        ports:
+            - "8090:8080"
+            - "50000:50000"
+        volumes:
+            - /var/jenkins_home
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /usr/bin/docker:/usr/bin/docker
+        privileged: true
+        depends_on:
+            - gitlab
+            - sonar
+    gitlab:
+        container_name: gitlab
+        image: gitlab/gitlab-ce
+        ports:
+            - "8080:80"
+            - "8443:443"
+            - "8022:22"
+        volumes:
+            - /etc/gitlab
+            - /var/log/gitlab
+            - /var/opt/gitlab
+    sonar:
+        container_name: sonarqube
+        image: sonarqube
+        ports:
+            - "9000:9000"
+            - "9092:9092"
+        volumes:
+            - /etc/gitlab
+            - /var/log/gitlab
+            - /var/opt/gitlab
